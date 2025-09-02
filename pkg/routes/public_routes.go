@@ -44,7 +44,7 @@ func RegisterPublicRoutes(app fiber.Router, db *gorm.DB) {
 	//Post routes
 	postGroup := api.Group("/posts")
 	postGroup.Get("/", postHandler.FindAllPosts)
-	postGroup.Get("/:id", postHandler.FindOrderByID)
+	postGroup.Get("/:id", postHandler.FindPostByID)
 	postGroup.Post("/", postHandler.CreatePost)
 	postGroup.Patch("/:id", postHandler.PatchPost)
 	postGroup.Delete("/:id", postHandler.DeletePost)
