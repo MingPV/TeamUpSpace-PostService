@@ -9,10 +9,10 @@ import (
 	orderRepository "github.com/MingPV/PostService/internal/order/repository"
 	orderUseCase "github.com/MingPV/PostService/internal/order/usecase"
 
-	// User
-	userHandler "github.com/MingPV/PostService/internal/user/handler/rest"
-	userRepository "github.com/MingPV/PostService/internal/user/repository"
-	userUseCase "github.com/MingPV/PostService/internal/user/usecase"
+	//Post
+	postHandler "github.com/MingPV/PostService/internal/post/handler/rest"
+	postRepository "github.com/MingPV/PostService/internal/post/repository"
+	postUseCase "github.com/MingPV/PostService/internal/post/usecase"
 )
 
 func RegisterPublicRoutes(app fiber.Router, db *gorm.DB) {
@@ -26,24 +26,12 @@ func RegisterPublicRoutes(app fiber.Router, db *gorm.DB) {
 	orderService := orderUseCase.NewOrderService(orderRepo)
 	orderHandler := orderHandler.NewHttpOrderHandler(orderService)
 
-	// User
-	userRepo := userRepository.NewGormUserRepository(db)
-	PostService := userUseCase.NewPostService(userRepo)
-	userHandler := userHandler.NewHttpUserHandler(PostService)
+	//Post
+	postRepo := postRepository.NewGormPostRepository(db)
+	postService := postUseCase.NewPostService(postRepo)
+	postHandler := postHandler.NewHttpPostHandler(postService)
 
 	// === Public Routes ===
-
-	// Auth routes (separated from /users)
-	authGroup := api.Group("/auth")
-	authGroup.Post("/signup", userHandler.Register)
-	authGroup.Post("/signin", userHandler.Login)
-
-	// User routes
-	userGroup := api.Group("/users")
-	userGroup.Get("/", userHandler.FindAllUsers)
-	userGroup.Get("/:id", userHandler.FindUserByID)
-	userGroup.Patch("/:id", userHandler.PatchUser)
-	userGroup.Delete("/:id", userHandler.DeleteUser)
 
 	// Order routes
 	orderGroup := api.Group("/orders")
@@ -52,4 +40,13 @@ func RegisterPublicRoutes(app fiber.Router, db *gorm.DB) {
 	orderGroup.Post("/", orderHandler.CreateOrder)
 	orderGroup.Patch("/:id", orderHandler.PatchOrder)
 	orderGroup.Delete("/:id", orderHandler.DeleteOrder)
+
+	//Post routes
+	postGroup := api.Group("/posts")
+	postGroup.Get("/", postHandler.FindAllPosts)
+	postGroup.Get("/:id", postHandler.FindOrderByID)
+	postGroup.Post("/", postHandler.CreatePost)
+	postGroup.Patch("/:id", postHandler.PatchPost)
+	postGroup.Delete("/:id", postHandler.DeletePost)
+
 }
