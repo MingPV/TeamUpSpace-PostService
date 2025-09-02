@@ -49,9 +49,12 @@ func SetupDependencies(env string) (*gorm.DB, *config.Config, error) {
 	}
 
 	if env == "test" {
-		db.Migrator().DropTable(&entities.Order{}, &entities.User{})
+		db.Migrator().DropTable(&entities.Order{}, &entities.User{}, &entities.Post{})
 	}
-	if err := db.AutoMigrate(&entities.Order{}, &entities.User{}); err != nil {
+
+	// db.Migrator().DropTable(&entities.Post{})
+
+	if err := db.AutoMigrate(&entities.Order{}, &entities.User{}, &entities.Post{}); err != nil {
 		return nil, nil, err
 	}
 
