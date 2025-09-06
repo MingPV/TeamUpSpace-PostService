@@ -84,7 +84,7 @@ func (h *HttpPostHandler) FindAllPosts(c *fiber.Ctx) error {
 // @Param id path int true "Post ID"
 // @Success 200 {object} entities.Post
 // @Router /posts/{id} [get]
-func (h *HttpPostHandler) FindOrderByID(c *fiber.Ctx) error {
+func (h *HttpPostHandler) FindPostByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	postID, err := strconv.Atoi(id)
 	if err != nil {
