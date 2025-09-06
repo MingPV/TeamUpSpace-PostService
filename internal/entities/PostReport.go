@@ -8,7 +8,7 @@ import (
 
 type PostReport struct {
 	ID        int       `gorm:"primaryKey;autoIncrement" json:"id"`
-	PostID    int       `gorm:"not null" json:"post_id"`
+	PostId    int       `gorm:"not null" json:"post_id"`
 	Reporter  uuid.UUID `gorm:"type:uuid;not null" json:"reporter"`
 	Report_to uuid.UUID `gorm:"type:uuid;not null" json:"report_to"`
 	Detail    string    `gorm:"size:255;not null" json:"detail"`
@@ -17,7 +17,7 @@ type PostReport struct {
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
 	// Relationships
-	Post Post `gorm:"foreignKey:PostID;" json:"post"`
+	Post Post `gorm:"foreignKey:PostId;" json:"post"`
 }
 
 func (PostReport) TableName() string {

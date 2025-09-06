@@ -37,8 +37,8 @@ func (h *HttpPostHandler) CreatePost(c *fiber.Ctx) error {
 		PostBy:		req.PostBy,
 		Title:		req.Title,
 		Detail:		req.Detail,
-		ImageURL:	req.ImageURL,
-		EventID:	req.EventID,
+		ImageUrl:	req.ImageUrl,
+		EventId:	req.EventId,
 		Status:		req.Status,
 	}
 
@@ -86,12 +86,12 @@ func (h *HttpPostHandler) FindAllPosts(c *fiber.Ctx) error {
 // @Router /posts/{id} [get]
 func (h *HttpPostHandler) FindPostByID(c *fiber.Ctx) error {
 	id := c.Params("id")
-	postID, err := strconv.Atoi(id)
+	PostId, err := strconv.Atoi(id)
 	if err != nil {
 		return responses.ErrorWithMessage(c, err, "invalid id")
 	}
 
-	post, err := h.postUseCase.FindPostByID(postID)
+	post, err := h.postUseCase.FindPostByID(PostId)
 	if err != nil {
 		return responses.Error(c, err)
 	}
@@ -108,12 +108,12 @@ func (h *HttpPostHandler) FindPostByID(c *fiber.Ctx) error {
 // @Router /posts/{id} [delete]
 func (h *HttpPostHandler) DeletePost(c *fiber.Ctx) error {
 	id := c.Params("id")
-	postID, err := strconv.Atoi(id)
+	PostId, err := strconv.Atoi(id)
 	if err != nil {
 		return responses.ErrorWithMessage(c, err, "invalid id")
 	}
 
-	if err := h.postUseCase.DeletePost(postID); err != nil {
+	if err := h.postUseCase.DeletePost(PostId); err != nil {
 		return responses.Error(c, err)
 	}
 
@@ -131,7 +131,7 @@ func (h *HttpPostHandler) DeletePost(c *fiber.Ctx) error {
 // @Router /posts/{id} [patch]
 func (h *HttpPostHandler) PatchPost(c *fiber.Ctx) error {
 	id := c.Params("id")
-	postID, err := strconv.Atoi(id)
+	PostId, err := strconv.Atoi(id)
 	if err != nil {
 		return responses.ErrorWithMessage(c, err, "invalid id")
 	}
@@ -145,8 +145,8 @@ func (h *HttpPostHandler) PatchPost(c *fiber.Ctx) error {
 		PostBy:		req.PostBy,
 		Title:		req.Title,
 		Detail:		req.Detail,
-		ImageURL:	req.ImageURL,
-		EventID:	req.EventID,
+		ImageUrl:	req.ImageUrl,
+		EventId:	req.EventId,
 		Status:		req.Status,
 	}
 
@@ -155,7 +155,7 @@ func (h *HttpPostHandler) PatchPost(c *fiber.Ctx) error {
 		return responses.ErrorWithMessage(c, err, msg)
 	}
 
-	updatedPost, err := h.postUseCase.PatchPost(postID, post)
+	updatedPost, err := h.postUseCase.PatchPost(PostId, post)
 	if err != nil {
 		return responses.Error(c, err)
 	}
