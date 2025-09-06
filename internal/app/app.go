@@ -21,6 +21,11 @@ import (
 	questionUseCase "github.com/MingPV/PostService/internal/question/usecase"
 	questionpb "github.com/MingPV/PostService/proto/question"
 
+	GrpcAnswerHandler "github.com/MingPV/PostService/internal/answer/handler/grpc"
+	answerRepository "github.com/MingPV/PostService/internal/answer/repository"
+	answerUseCase "github.com/MingPV/PostService/internal/answer/usecase"
+	answerpb "github.com/MingPV/PostService/proto/answer"
+
 	"github.com/MingPV/PostService/pkg/config"
 	"github.com/MingPV/PostService/pkg/database"
 	"github.com/MingPV/PostService/pkg/middleware"
@@ -66,6 +71,12 @@ func SetupGrpcServer(db *gorm.DB, cfg *config.Config) (*grpc.Server, error) {
 	questionHandler := GrpcQuestionHandler.NewGrpcQuestionHandler(questionService);
 	questionpb.RegisterQuestionServiceServer(s, questionHandler);
 
+	//answer
+	answerRepo := answerRepository.NewGormAnswerRepository(db);
+	answerService := answerUseCase.NewAnswerService(answerRepo);
+
+	answerHandler := GrpcAnswerHandler.NewGrpcAnswerHandler(answerService);
+	answerpb.RegisterAnswerServiceServer(s, answerHandler);
 
 	return s, nil
 }
