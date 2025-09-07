@@ -26,6 +26,11 @@ import (
 	answerUseCase "github.com/MingPV/PostService/internal/answer/usecase"
 	answerpb "github.com/MingPV/PostService/proto/answer"
 
+	GrpcPostLikeHandler "github.com/MingPV/PostService/internal/postlike/handler/grpc"
+	postlikeRepository "github.com/MingPV/PostService/internal/postlike/repository"
+	postlikeUseCase "github.com/MingPV/PostService/internal/postlike/usecase"
+	postlikepb "github.com/MingPV/PostService/proto/postlike"
+
 	"github.com/MingPV/PostService/pkg/config"
 	"github.com/MingPV/PostService/pkg/database"
 	"github.com/MingPV/PostService/pkg/middleware"
@@ -77,6 +82,13 @@ func SetupGrpcServer(db *gorm.DB, cfg *config.Config) (*grpc.Server, error) {
 
 	answerHandler := GrpcAnswerHandler.NewGrpcAnswerHandler(answerService);
 	answerpb.RegisterAnswerServiceServer(s, answerHandler);
+
+	//postlike
+	postlikeRepo := postlikeRepository.NewGormPostLikeRepository(db);
+	postlikeService := postlikeUseCase.NewPostLikeService(postlikeRepo);
+
+	postlikeHandler := GrpcPostLikeHandler.NewGprcPostLikeHandler(postlikeService);
+	postlikepb.RegisterPostLikeServiceServer(s, postlikeHandler);
 
 	return s, nil
 }

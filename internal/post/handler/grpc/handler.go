@@ -24,9 +24,9 @@ func NewGrpcPostHandler(uc usecase.PostUseCase) *GrpcPostHandler {
 
 func (h *GrpcPostHandler) CreatePost(ctx context.Context, req *postpb.CreatePostRequest) (*postpb.CreatePostResponse, error) {
 	postByUUID, err := uuid.Parse(req.PostBy)
-if err != nil {
-    return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
-}
+	if err != nil {
+		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
+	}
 	post := &entities.Post{
 		PostBy:		postByUUID,
 		Title:		req.Title,
@@ -66,9 +66,9 @@ func (h *GrpcPostHandler) FindAllPosts(ctx context.Context, req *postpb.FindAllP
 
 func (h *GrpcPostHandler) PatchPost(ctx context.Context, req *postpb.PatchPostRequest) (*postpb.PatchPostResponse, error) {
 	postByUUID, err := uuid.Parse(req.PostBy)
-if err != nil {
-    return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
-}
+	if err != nil {
+		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
+	}
 	post := &entities.Post{
 		PostBy:		postByUUID,
 		Title:		req.Title,
