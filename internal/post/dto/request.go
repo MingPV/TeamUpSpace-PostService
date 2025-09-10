@@ -6,7 +6,7 @@ type CreatePostRequest struct {
     PostBy   uuid.UUID `json:"post_by" binding:"required,uuid"`
     Title    string `json:"title" binding:"required"`
     Detail   string `json:"detail"`
-    ImageURL string `json:"image_url"`
-    EventID  int    `json:"event_id"`
+    ImageUrl string `json:"image_url"`
+    EventId  int    `json:"event_id"`
     Status   string `json:"status"` // optional, default: "active"
 }

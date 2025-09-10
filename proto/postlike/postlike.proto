@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package postlike;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "proto/postlike";
+
+message PostLike {
+    int32 post_id = 1;
+    string user_id = 2;
+    google.protobuf.Timestamp created_at = 3;  
+}
+
+message CreatePostLikeRequest {
+    int32 post_id = 1;
+    string user_id = 2;
+}
+
+message CreatePostLikeResponse {
+    PostLike postlike = 1;
+}
+
+message FindAllPostLikesByPostIDRequest {
+    int32 post_id = 1;
+}
+
+message FindAllPostLikesByPostIDResponse {
+    repeated PostLike postlikes = 1;
+}
+
+message FindAllPostLikesByUserIDRequest {
+    string user_id = 1;
+}
+
+message FindAllPostLikesByUserIDResponse {
+    repeated PostLike postlikes = 1;
+}
+
+message DeletePostLikeRequest {
+    int32 post_id = 1;
+    string user_id = 2;
+}
+
+message DeletePostLikeResponse {
+    string message = 1;
+}
+
+service PostLikeService {
+    rpc CreatePostLike(CreatePostLikeRequest) returns (CreatePostLikeResponse);
+    rpc FindAllPostLikesByPostID(FindAllPostLikesByPostIDRequest) returns (FindAllPostLikesByPostIDResponse);
+    rpc FindAllPostLikesByUserID(FindAllPostLikesByUserIDRequest) returns (FindAllPostLikesByUserIDResponse);
+    rpc DeletePostLike(DeletePostLikeRequest) returns (DeletePostLikeResponse);
+}
