@@ -7,11 +7,10 @@ import (
 )
 
 type TeamRequest struct {
-	ID			int       `gorm:"primaryKey;autoIncrement" json:"id"`
-	PostId    	int       `gorm:"not null" json:"post_id"`
+	PostId    	int       `gorm:"not null;primaryKey" json:"post_id"`
+    RequestBy 	uuid.UUID `gorm:"type:uuid;not null;primaryKey" json:"request_by"`
 	RequestTo	uuid.UUID `gorm:"type:uuid;not null" json:"request_to"`
-	RequestBy	uuid.UUID `gorm:"type:uuid;not null" json:"request_by"`
-	IsAccept    bool	  `gorm:"default:false" json:"is_accept"`
+	Status    	string	  `gorm:"size:50;default:'pending'" json:"status"`
 	CreatedAt 	time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt 	time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
