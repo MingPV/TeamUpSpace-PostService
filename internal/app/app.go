@@ -31,6 +31,11 @@ import (
 	postlikeUseCase "github.com/MingPV/PostService/internal/postlike/usecase"
 	postlikepb "github.com/MingPV/PostService/proto/postlike"
 
+	GrpcPostReportHandler "github.com/MingPV/PostService/internal/postreport/handler/grpc"
+	postreportRepository "github.com/MingPV/PostService/internal/postreport/repository"
+	postreportUseCase "github.com/MingPV/PostService/internal/postreport/usecase"
+	postreportpb "github.com/MingPV/PostService/proto/postreport"
+
 	"github.com/MingPV/PostService/pkg/config"
 	"github.com/MingPV/PostService/pkg/database"
 	"github.com/MingPV/PostService/pkg/middleware"
@@ -63,32 +68,39 @@ func SetupGrpcServer(db *gorm.DB, cfg *config.Config) (*grpc.Server, error) {
 	orderpb.RegisterOrderServiceServer(s, orderHandler)
 
 	//post
-	postRepo := postRepository.NewGormPostRepository(db);
-	postService := postUseCase.NewPostService(postRepo);
+	postRepo := postRepository.NewGormPostRepository(db)
+	postService := postUseCase.NewPostService(postRepo)
 
-	postHandler := GrpcPostHandler.NewGrpcPostHandler(postService);
-	postpb.RegisterPostServiceServer(s, postHandler);
+	postHandler := GrpcPostHandler.NewGrpcPostHandler(postService)
+	postpb.RegisterPostServiceServer(s, postHandler)
 
 	//question
-	questionRepo := questionRepository.NewGormQuestionRepository(db);
-	questionService := questionUseCase.NewQuestionService(questionRepo);
+	questionRepo := questionRepository.NewGormQuestionRepository(db)
+	questionService := questionUseCase.NewQuestionService(questionRepo)
 
-	questionHandler := GrpcQuestionHandler.NewGrpcQuestionHandler(questionService);
-	questionpb.RegisterQuestionServiceServer(s, questionHandler);
+	questionHandler := GrpcQuestionHandler.NewGrpcQuestionHandler(questionService)
+	questionpb.RegisterQuestionServiceServer(s, questionHandler)
 
 	//answer
-	answerRepo := answerRepository.NewGormAnswerRepository(db);
-	answerService := answerUseCase.NewAnswerService(answerRepo);
+	answerRepo := answerRepository.NewGormAnswerRepository(db)
+	answerService := answerUseCase.NewAnswerService(answerRepo)
 
-	answerHandler := GrpcAnswerHandler.NewGrpcAnswerHandler(answerService);
-	answerpb.RegisterAnswerServiceServer(s, answerHandler);
+	answerHandler := GrpcAnswerHandler.NewGrpcAnswerHandler(answerService)
+	answerpb.RegisterAnswerServiceServer(s, answerHandler)
 
 	//postlike
-	postlikeRepo := postlikeRepository.NewGormPostLikeRepository(db);
-	postlikeService := postlikeUseCase.NewPostLikeService(postlikeRepo);
+	postlikeRepo := postlikeRepository.NewGormPostLikeRepository(db)
+	postlikeService := postlikeUseCase.NewPostLikeService(postlikeRepo)
 
-	postlikeHandler := GrpcPostLikeHandler.NewGprcPostLikeHandler(postlikeService);
-	postlikepb.RegisterPostLikeServiceServer(s, postlikeHandler);
+	postlikeHandler := GrpcPostLikeHandler.NewGprcPostLikeHandler(postlikeService)
+	postlikepb.RegisterPostLikeServiceServer(s, postlikeHandler)
+
+	//postreport
+	postreportRepo := postreportRepository.NewGormPostReportRepository(db)
+	postreportService := postreportUseCase.NewPostReportService(postreportRepo)
+
+	postreportHandler := GrpcPostReportHandler.NewGrpcPostReportHandler(postreportService)
+	postreportpb.RegisterPostReportServiceServer(s, postreportHandler)
 
 	return s, nil
 }
@@ -107,7 +119,6 @@ func SetupDependencies(env string) (*gorm.DB, *config.Config, error) {
 	}
 
 	// db.Migrator().DropTable(&entities.Order{}, &entities.Post{}, &entities.Answer{}, &entities.Comment{}, &entities.PostLike{}, &entities.PostReport{}, &entities.Question{}, &entities.Subcomment{}, &entities.TeamRequest{})
-
 
 	if err := db.AutoMigrate(&entities.Order{}, &entities.Post{}, &entities.Answer{}, &entities.Comment{}, &entities.PostLike{}, &entities.PostReport{}, &entities.Question{}, &entities.Subcomment{}, &entities.TeamRequest{}); err != nil {
 		return nil, nil, err
