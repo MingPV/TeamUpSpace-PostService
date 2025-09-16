@@ -36,6 +36,11 @@ import (
 	postreportUseCase "github.com/MingPV/PostService/internal/postreport/usecase"
 	postreportpb "github.com/MingPV/PostService/proto/postreport"
 
+	GrpcTeamRequestHandler "github.com/MingPV/PostService/internal/teamrequest/handler/grpc"
+	teamrequestRepository "github.com/MingPV/PostService/internal/teamrequest/repository"
+	teamrequestUseCase "github.com/MingPV/PostService/internal/teamrequest/usecase"
+	teamrequestpb "github.com/MingPV/PostService/proto/teamrequest"
+
 	"github.com/MingPV/PostService/pkg/config"
 	"github.com/MingPV/PostService/pkg/database"
 	"github.com/MingPV/PostService/pkg/middleware"
@@ -101,6 +106,13 @@ func SetupGrpcServer(db *gorm.DB, cfg *config.Config) (*grpc.Server, error) {
 
 	postreportHandler := GrpcPostReportHandler.NewGrpcPostReportHandler(postreportService)
 	postreportpb.RegisterPostReportServiceServer(s, postreportHandler)
+
+	//teamrequest
+	teamrequestRepo := teamrequestRepository.NewGormTeamRequestRepository(db)
+	teamrequestService := teamrequestUseCase.NewTeamRequestService(teamrequestRepo)
+
+	teamrequestHandler := GrpcTeamRequestHandler.NewGrpcTeamRequestHandler(teamrequestService)
+	teamrequestpb.RegisterTeamRequestServiceServer(s, teamrequestHandler)
 
 	return s, nil
 }

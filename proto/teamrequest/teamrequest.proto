@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package teamrequest;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "proto/teamrequest";
+
+message TeamRequest {
+  int32 post_id = 1;
+  string request_by = 2;
+  string request_to = 3;
+  string status = 4;
+}
+
+message CreateTeamRequestRequest {
+  int32 post_id = 1;
+  string request_by = 2;
+  string request_to = 3;
+  string status = 4;
+}
+
+message CreateTeamRequestResponse {
+  TeamRequest team_request = 1;
+}
+
+message FindTeamRequestByIDRequest {
+  int32 post_id = 1;
+  string request_by = 2;
+}
+
+message FindTeamRequestByIDResponse {
+  TeamRequest team_request = 1;
+}
+
+message FindAllByPostIDRequest {
+  int32 post_id = 1;
+}
+
+message FindAllByPostIDResponse {
+  repeated TeamRequest team_requests = 1;
+}
+
+message FindAllByRequestByRequest {
+  string request_by = 1; // user UUID
+}
+
+message FindAllByRequestByResponse {
+  repeated TeamRequest team_requests = 1;
+}
+
+message PatchTeamRequestRequest {
+  int32 post_id = 1;
+  string request_by = 2;
+  string status = 3;
+}
+
+message PatchTeamRequestResponse {
+  TeamRequest team_request = 1;
+}
+
+message DeleteTeamRequestRequest {
+  int32 post_id = 1;
+  string request_by = 2;
+}
+
+message DeleteTeamRequestResponse {
+  string message = 1;
+}
+
+service TeamRequestService {
+  rpc CreateTeamRequest(CreateTeamRequestRequest) returns (CreateTeamRequestResponse);
+  rpc FindTeamRequestByID(FindTeamRequestByIDRequest) returns (FindTeamRequestByIDResponse);
+  rpc FindAllByPostID(FindAllByPostIDRequest) returns (FindAllByPostIDResponse);
+  rpc FindAllByRequestBy(FindAllByRequestByRequest) returns (FindAllByRequestByResponse);
+  rpc PatchTeamRequest(PatchTeamRequestRequest) returns (PatchTeamRequestResponse);
+  rpc DeleteTeamRequest(DeleteTeamRequestRequest) returns (DeleteTeamRequestResponse);
+}
