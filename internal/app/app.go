@@ -36,6 +36,11 @@ import (
 	postreportUseCase "github.com/MingPV/PostService/internal/postreport/usecase"
 	postreportpb "github.com/MingPV/PostService/proto/postreport"
 
+	GrpcCommentHandler "github.com/MingPV/PostService/internal/comment/handler/grpc"
+	commentRepository "github.com/MingPV/PostService/internal/comment/repository"
+	commentUseCase "github.com/MingPV/PostService/internal/comment/usecase"
+	commentpb "github.com/MingPV/PostService/proto/comment"
+
 	"github.com/MingPV/PostService/pkg/config"
 	"github.com/MingPV/PostService/pkg/database"
 	"github.com/MingPV/PostService/pkg/middleware"
@@ -101,6 +106,13 @@ func SetupGrpcServer(db *gorm.DB, cfg *config.Config) (*grpc.Server, error) {
 
 	postreportHandler := GrpcPostReportHandler.NewGrpcPostReportHandler(postreportService)
 	postreportpb.RegisterPostReportServiceServer(s, postreportHandler)
+
+	//comment
+	commentRepo := commentRepository.NewGormCommentRepository(db)
+	commentService := commentUseCase.NewCommentService(commentRepo)
+
+	commentHandler := GrpcCommentHandler.NewGrpcCommentHandler(commentService)
+	commentpb.RegisterCommentServiceServer(s, commentHandler)
 
 	return s, nil
 }
