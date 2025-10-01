@@ -28,10 +28,10 @@ func (h *GrpcAnswerHandler) CreateAnswer(ctx context.Context, req *answerpb.Crea
 		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
 	}
 	answer := &entities.Answer{
-		PostId: int(req.PostId),
-		UserId: answerByUUID,
+		PostId:   int(req.PostId),
+		UserId:   answerByUUID,
 		Question: req.Question,
-		Answer: req.Answer,
+		Answer:   req.Answer,
 	}
 
 	if err := h.answerUseCase.CreateAnswer(answer); err != nil {
@@ -41,7 +41,7 @@ func (h *GrpcAnswerHandler) CreateAnswer(ctx context.Context, req *answerpb.Crea
 }
 
 func (h *GrpcAnswerHandler) FindAnswerByID(ctx context.Context, req *answerpb.FindAnswerByIDRequest) (*answerpb.FindAnswerByIDResponse, error) {
-	answer, err := h.answerUseCase.FindAnswerByID(int(req.Id));
+	answer, err := h.answerUseCase.FindAnswerByID(int(req.Id))
 	if err != nil {
 		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
 	}
@@ -60,6 +60,34 @@ func (h *GrpcAnswerHandler) FindAllAnswersByPostID(ctx context.Context, req *ans
 	}
 
 	return &answerpb.FindAllAnswersByPostIDResponse{Answers: protoAnswers}, nil
+}
+
+func (h *GrpcAnswerHandler) FindAnswerByPostIDAndUserID(ctx context.Context, req *answerpb.FindAnswerByPostIDAndUserIDRequest) (*answerpb.FindAnswerByPostIDAndUserIDResponse, error) {
+	answers, err := h.answerUseCase.FindAllAnswersByPostID(int(req.PostId))
+	if err != nil {
+		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
+	}
+
+	var protoAnswers []*answerpb.Answer
+	for _, o := range answers {
+		protoAnswers = append(protoAnswers, toProtoAnswer(o))
+	}
+
+	return &answerpb.FindAnswerByPostIDAndUserIDResponse{Answers: protoAnswers}, nil
+}
+
+func (h *GrpcAnswerHandler) FindAllAnswersByUserID(ctx context.Context, req *answerpb.FindAllAnswersByUserIDRequest) (*answerpb.FindAllAnswersByUserIDResponse, error) {
+	answers, err := h.answerUseCase.FindAllAnswerByUserID(req.UserId)
+	if err != nil {
+		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
+	}
+
+	var protoAnswers []*answerpb.Answer
+	for _, o := range answers {
+		protoAnswers = append(protoAnswers, toProtoAnswer(o))
+	}
+
+	return &answerpb.FindAllAnswersByUserIDResponse{Answers: protoAnswers}, nil
 }
 
 func (h *GrpcAnswerHandler) FindAllAnswers(ctx context.Context, req *answerpb.FindAllAnswersRequest) (*answerpb.FindAllAnswersResponse, error) {
@@ -85,11 +113,11 @@ func (h *GrpcAnswerHandler) DeleteAnswer(ctx context.Context, req *answerpb.Dele
 
 func toProtoAnswer(a *entities.Answer) *answerpb.Answer {
 	return &answerpb.Answer{
-		Id: int32(a.ID),
-		PostId: int32(a.PostId),
-		UserId: a.UserId.String(),
-		Question: a.Question,
-		Answer: a.Answer,
+		Id:        int32(a.ID),
+		PostId:    int32(a.PostId),
+		UserId:    a.UserId.String(),
+		Question:  a.Question,
+		Answer:    a.Answer,
 		CreatedAt: timestamppb.New(a.CreatedAt),
 	}
 }

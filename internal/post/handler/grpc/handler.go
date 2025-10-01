@@ -28,12 +28,12 @@ func (h *GrpcPostHandler) CreatePost(ctx context.Context, req *postpb.CreatePost
 		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
 	}
 	post := &entities.Post{
-		PostBy:		postByUUID,
-		Title:		req.Title,
-		Detail:		req.Detail,
-		ImageUrl:	req.ImageUrl,
-		EventId:	int(req.EventId),
-		Status:		req.Status,
+		PostBy:   postByUUID,
+		Title:    req.Title,
+		Detail:   req.Detail,
+		ImageUrl: req.ImageUrl,
+		EventId:  int(req.EventId),
+		Status:   req.Status,
 	}
 
 	if err := h.postUseCase.CreatePost(post); err != nil {
@@ -43,7 +43,7 @@ func (h *GrpcPostHandler) CreatePost(ctx context.Context, req *postpb.CreatePost
 }
 
 func (h *GrpcPostHandler) FindPostByID(ctx context.Context, req *postpb.FindPostByIDRequest) (*postpb.FindPostByIDResponse, error) {
-	post, err := h.postUseCase.FindPostByID((int(req.Id)));
+	post, err := h.postUseCase.FindPostByID((int(req.Id)))
 	if err != nil {
 		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
 	}
@@ -65,19 +65,19 @@ func (h *GrpcPostHandler) FindAllPosts(ctx context.Context, req *postpb.FindAllP
 }
 
 func (h *GrpcPostHandler) PatchPost(ctx context.Context, req *postpb.PatchPostRequest) (*postpb.PatchPostResponse, error) {
-	postByUUID, err := uuid.Parse(req.PostBy)
-	if err != nil {
-		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
-	}
+	// postByUUID, err := uuid.Parse(req.PostBy)
+	// if err != nil {
+	// 	return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
+	// }
 	post := &entities.Post{
-		PostBy:		postByUUID,
-		Title:		req.Title,
-		Detail:		req.Detail,
-		ImageUrl:	req.ImageUrl,
-		EventId:	int(req.EventId),
-		Status:		req.Status,
+		PostBy:        uuid.Nil,
+		Title:         req.Title,
+		Detail:        req.Detail,
+		ImageUrl:      req.ImageUrl,
+		EventId:       int(req.EventId),
+		Status:        req.Status,
 		CommentsCount: int(req.CommentsCount),
-		LikesCount: int(req.LikesCount),
+		LikesCount:    int(req.LikesCount),
 	}
 	updatedpost, err := h.postUseCase.PatchPost(int(req.Id), post)
 	if err != nil {
@@ -95,16 +95,16 @@ func (h *GrpcPostHandler) DeletePost(ctx context.Context, req *postpb.DeletePost
 
 func toProtoPost(p *entities.Post) *postpb.Post {
 	return &postpb.Post{
-		Id:			int32(p.ID),
-		PostBy:		p.PostBy.String(),
-		Title:		p.Title,
-		Detail:		p.Detail,
-		ImageUrl:	p.ImageUrl,
-		EventId:	int32(p.EventId),
-		Status:		p.Status,
+		Id:            int32(p.ID),
+		PostBy:        p.PostBy.String(),
+		Title:         p.Title,
+		Detail:        p.Detail,
+		ImageUrl:      p.ImageUrl,
+		EventId:       int32(p.EventId),
+		Status:        p.Status,
 		CommentsCount: int32(p.CommentsCount),
-		LikesCount: int32(p.LikesCount),
-		CreatedAt: timestamppb.New(p.CreatedAt),
-		UpdatedAt: timestamppb.New(p.UpdatedAt),
+		LikesCount:    int32(p.LikesCount),
+		CreatedAt:     timestamppb.New(p.CreatedAt),
+		UpdatedAt:     timestamppb.New(p.UpdatedAt),
 	}
 }

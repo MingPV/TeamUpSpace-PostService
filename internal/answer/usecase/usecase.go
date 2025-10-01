@@ -20,7 +20,7 @@ func (s *AnswerService) CreateAnswer(answer *entities.Answer) error {
 	return nil
 }
 
-func (s *AnswerService) FindAllAnswers() ([]*entities.Answer, error){
+func (s *AnswerService) FindAllAnswers() ([]*entities.Answer, error) {
 	answers, err := s.repo.FindAll()
 	if err != nil {
 		return nil, err
@@ -38,6 +38,22 @@ func (s *AnswerService) FindAnswerByID(id int) (*entities.Answer, error) {
 
 func (s *AnswerService) FindAllAnswersByPostID(postId int) ([]*entities.Answer, error) {
 	answers, err := s.repo.FindAllByPostID(postId)
+	if err != nil {
+		return nil, err
+	}
+	return answers, nil
+}
+
+func (s *AnswerService) FindAllAnswerByPostIDAndUserID(postId int, userId string) ([]*entities.Answer, error) {
+	answers, err := s.repo.FindAllByPostIDAndUserID(postId, userId)
+	if err != nil {
+		return nil, err
+	}
+	return answers, nil
+}
+
+func (s *AnswerService) FindAllAnswerByUserID(userId string) ([]*entities.Answer, error) {
+	answers, err := s.repo.FindAllByUserID(userId)
 	if err != nil {
 		return nil, err
 	}

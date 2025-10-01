@@ -48,6 +48,23 @@ message FindAllAnswersByPostIDResponse {
     repeated Answer answers = 1;
 }
 
+message FindAnswerByPostIDAndUserIDRequest {
+    int32 post_id = 1;
+    string user_id = 2;
+}
+
+message FindAnswerByPostIDAndUserIDResponse {
+    repeated Answer answers = 1;
+}
+
+message FindAllAnswersByUserIDRequest {
+    string user_id = 1;
+}
+
+message FindAllAnswersByUserIDResponse {
+    repeated Answer answers = 1;
+}
+
 message DeleteAnswerRequest {
     int32 id = 1;
 }
@@ -60,6 +77,8 @@ service AnswerService {
     rpc CreateAnswer(CreateAnswerRequest) returns (CreateAnswerResponse);
     rpc FindAnswerByID(FindAnswerByIDRequest) returns (FindAnswerByIDResponse);
     rpc FindAllAnswersByPostID(FindAllAnswersByPostIDRequest) returns (FindAllAnswersByPostIDResponse);
+    rpc FindAnswerByPostIDAndUserID(FindAnswerByPostIDAndUserIDRequest) returns (FindAnswerByPostIDAndUserIDResponse);
+    rpc FindAllAnswersByUserID(FindAllAnswersByUserIDRequest) returns (FindAllAnswersByUserIDResponse);
     rpc FindAllAnswers(FindAllAnswersRequest) returns (FindAllAnswersResponse);
     rpc DeleteAnswer(DeleteAnswerRequest) returns (DeleteAnswerResponse);
 }

@@ -51,6 +51,32 @@ func (r *GormAnswerRepository) FindAllByPostID(postId int) ([]*entities.Answer, 
 	return answers, nil
 }
 
+func (r *GormAnswerRepository) FindAllByPostIDAndUserID(postId int, userId string) ([]*entities.Answer, error) {
+	var answerValues []entities.Answer
+	if err := r.db.Where("post_id = ? AND user_id = ?", postId, userId).Find(&answerValues).Error; err != nil {
+		return nil, err
+	}
+
+	answers := make([]*entities.Answer, len(answerValues))
+	for i := range answerValues {
+		answers[i] = &answerValues[i]
+	}
+	return answers, nil
+}
+
+func (r *GormAnswerRepository) FindAllByUserID(userId string) ([]*entities.Answer, error) {
+	var answerValues []entities.Answer
+	if err := r.db.Where("user_id = ?", userId).Find(&answerValues).Error; err != nil {
+		return nil, err
+	}
+
+	answers := make([]*entities.Answer, len(answerValues))
+	for i := range answerValues {
+		answers[i] = &answerValues[i]
+	}
+	return answers, nil
+}
+
 func (r *GormAnswerRepository) Delete(id int) error {
 	result := r.db.Delete(&entities.Answer{}, id)
 	if result.Error != nil {

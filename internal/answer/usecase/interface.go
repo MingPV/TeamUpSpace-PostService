@@ -8,4 +8,6 @@ type AnswerUseCase interface {
 	DeleteAnswer(id int) error
 	FindAnswerByID(id int) (*entities.Answer, error)
 	FindAllAnswersByPostID(postId int) ([]*entities.Answer, error)
+	FindAllAnswerByPostIDAndUserID(postId int, userId string) ([]*entities.Answer, error)
+	FindAllAnswerByUserID(userId string) ([]*entities.Answer, error)
 }
