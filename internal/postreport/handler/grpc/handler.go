@@ -70,12 +70,13 @@ func (h *GrpcPostReportHandler) FindAllPostReports(ctx context.Context, req *pos
 }
 
 func (h *GrpcPostReportHandler) PatchPostReport(ctx context.Context, req *postreportpb.PatchPostReportRequest) (*postreportpb.PatchPostReportResponse, error) {
+
 	reporterUUID, err := uuid.Parse(req.Reporter)
-	if err != nil {
+	if err != nil && req.Reporter != "" {
 		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
 	}
 	reportToUUID, err := uuid.Parse(req.ReportTo)
-	if err != nil {
+	if err != nil && req.ReportTo != "" {
 		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
 	}
 
