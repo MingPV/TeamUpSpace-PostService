@@ -3,14 +3,16 @@ package usecase
 import (
 	"github.com/MingPV/PostService/internal/entities"
 	"github.com/MingPV/PostService/internal/question/repository"
+	"github.com/MingPV/PostService/pkg/mq"
 )
 
 type QuestionService struct {
 	repo repository.QuestionRepository
+	mq   mq.MQPublisher
 }
 
-func NewQuestionService(repo repository.QuestionRepository) QuestionUseCase {
-	return &QuestionService{repo: repo}
+func NewQuestionService(repo repository.QuestionRepository, mq mq.MQPublisher) QuestionUseCase {
+	return &QuestionService{repo: repo, mq: mq}
 }
 
 func (s *QuestionService) CreateQuestion(question *entities.Question) error {
@@ -20,7 +22,7 @@ func (s *QuestionService) CreateQuestion(question *entities.Question) error {
 	return nil
 }
 
-func (s *QuestionService) FindAllQuestions() ([]*entities.Question, error){
+func (s *QuestionService) FindAllQuestions() ([]*entities.Question, error) {
 	questions, err := s.repo.FindAll()
 	if err != nil {
 		return nil, err
@@ -58,9 +60,5 @@ func (s *QuestionService) PatchQuestion(id int, question *entities.Question) (*e
 	updatedQuestion, _ := s.repo.FindByID(id)
 
 	return updatedQuestion, nil
-	
+
 }
-
-
-
-

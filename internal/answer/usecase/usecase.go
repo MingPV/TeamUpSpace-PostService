@@ -3,14 +3,16 @@ package usecase
 import (
 	"github.com/MingPV/PostService/internal/answer/repository"
 	"github.com/MingPV/PostService/internal/entities"
+	"github.com/MingPV/PostService/pkg/mq"
 )
 
 type AnswerService struct {
 	repo repository.AnswerRepository
+	mq   mq.MQPublisher
 }
 
-func NewAnswerService(repo repository.AnswerRepository) AnswerUseCase {
-	return &AnswerService{repo: repo}
+func NewAnswerService(repo repository.AnswerRepository, mq mq.MQPublisher) AnswerUseCase {
+	return &AnswerService{repo: repo, mq: mq}
 }
 
 func (s *AnswerService) CreateAnswer(answer *entities.Answer) error {

@@ -44,6 +44,7 @@ import (
 	"github.com/MingPV/PostService/pkg/config"
 	"github.com/MingPV/PostService/pkg/database"
 	"github.com/MingPV/PostService/pkg/middleware"
+	"github.com/MingPV/PostService/pkg/mq"
 	"github.com/MingPV/PostService/pkg/routes"
 
 	"google.golang.org/grpc/reflection"
@@ -65,6 +66,11 @@ func SetupRestServer(db *gorm.DB, cfg *config.Config) (*fiber.App, error) {
 func SetupGrpcServer(db *gorm.DB, cfg *config.Config) (*grpc.Server, error) {
 	s := grpc.NewServer()
 	reflection.Register(s)
+
+	// MQ Publisher
+	rabbitURL := cfg.RabbitMQUrl
+	mqPublisher := mq.NewRabbitMQPublisher(rabbitURL)
+
 	//order
 	orderRepo := orderRepository.NewGormOrderRepository(db)
 	orderService := orderUseCase.NewOrderService(orderRepo)
@@ -74,28 +80,28 @@ func SetupGrpcServer(db *gorm.DB, cfg *config.Config) (*grpc.Server, error) {
 
 	//post
 	postRepo := postRepository.NewGormPostRepository(db)
-	postService := postUseCase.NewPostService(postRepo)
+	postService := postUseCase.NewPostService(postRepo, mqPublisher)
 
 	postHandler := GrpcPostHandler.NewGrpcPostHandler(postService)
 	postpb.RegisterPostServiceServer(s, postHandler)
 
 	//question
 	questionRepo := questionRepository.NewGormQuestionRepository(db)
-	questionService := questionUseCase.NewQuestionService(questionRepo)
+	questionService := questionUseCase.NewQuestionService(questionRepo, mqPublisher)
 
 	questionHandler := GrpcQuestionHandler.NewGrpcQuestionHandler(questionService)
 	questionpb.RegisterQuestionServiceServer(s, questionHandler)
 
 	//answer
 	answerRepo := answerRepository.NewGormAnswerRepository(db)
-	answerService := answerUseCase.NewAnswerService(answerRepo)
+	answerService := answerUseCase.NewAnswerService(answerRepo, mqPublisher)
 
 	answerHandler := GrpcAnswerHandler.NewGrpcAnswerHandler(answerService)
 	answerpb.RegisterAnswerServiceServer(s, answerHandler)
 
 	//postlike
 	postlikeRepo := postlikeRepository.NewGormPostLikeRepository(db)
-	postlikeService := postlikeUseCase.NewPostLikeService(postlikeRepo)
+	postlikeService := postlikeUseCase.NewPostLikeService(postlikeRepo, postRepo, mqPublisher)
 
 	postlikeHandler := GrpcPostLikeHandler.NewGprcPostLikeHandler(postlikeService)
 	postlikepb.RegisterPostLikeServiceServer(s, postlikeHandler)
@@ -109,7 +115,7 @@ func SetupGrpcServer(db *gorm.DB, cfg *config.Config) (*grpc.Server, error) {
 
 	//comment
 	commentRepo := commentRepository.NewGormCommentRepository(db)
-	commentService := commentUseCase.NewCommentService(commentRepo)
+	commentService := commentUseCase.NewCommentService(commentRepo, postRepo, mqPublisher)
 
 	commentHandler := GrpcCommentHandler.NewGrpcCommentHandler(commentService)
 	commentpb.RegisterCommentServiceServer(s, commentHandler)

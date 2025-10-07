@@ -1,23 +1,57 @@
 package usecase
 
 import (
-	"github.com/MingPV/PostService/internal/entities"
+	"log"
+
 	"github.com/MingPV/PostService/internal/comment/repository"
+	"github.com/MingPV/PostService/internal/entities"
+	postrepo "github.com/MingPV/PostService/internal/post/repository"
+	"github.com/MingPV/PostService/pkg/mq"
 )
 
 type CommentService struct {
-	repo repository.CommentRepository
+	repo     repository.CommentRepository
+	postrepo postrepo.PostRepository
+	mq       mq.MQPublisher
 }
 
-func NewCommentService(repo repository.CommentRepository) CommentUseCase {
-	return &CommentService{repo:repo}
+func NewCommentService(repo repository.CommentRepository, postrepo postrepo.PostRepository, mq mq.MQPublisher) CommentUseCase {
+	return &CommentService{repo: repo, postrepo: postrepo, mq: mq}
 }
 
 func (s *CommentService) CreateComment(comment *entities.Comment) error {
-	if err := s.repo.Save(comment); err !=nil {
+	if err := s.repo.Save(comment); err != nil {
 		return err
 	}
-	
+
+	// find who is post's owner
+	post, err := s.postrepo.FindByID(comment.PostId)
+	if err != nil {
+		return err
+	}
+
+	// check if post's owner is same as comment's user
+	if post.PostBy == comment.CommentBy {
+		// if same, do not send event
+		return nil
+	}
+
+	mqevent := entities.CommentCreatedEvent{
+		ID:          comment.ID,
+		PostId:      comment.PostId,
+		PostOwnerId: post.PostBy,
+		CommentBy:   comment.CommentBy,
+		ParentId:    comment.ParentId,
+		Detail:      comment.Detail,
+		CreatedAt:   comment.CreatedAt,
+		UpdatedAt:   comment.UpdatedAt,
+	}
+
+	err = s.mq.Publish("CommentCreated", mqevent)
+	if err != nil {
+		log.Println("Failed to publish event:", err)
+	}
+
 	return nil
 }
 

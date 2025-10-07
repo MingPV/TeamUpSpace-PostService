@@ -26,6 +26,8 @@ type Config struct {
 	PgAdminEmail    string
 	PgAdminPassword string
 	PgAdminPort     string
+
+	RabbitMQUrl string
 }
 
 func LoadConfig(env string) *Config {
@@ -55,6 +57,7 @@ func LoadConfig(env string) *Config {
 		PgAdminEmail:    getEnv("PGADMIN_DEFAULT_EMAIL", ""),
 		PgAdminPassword: getEnv("PGADMIN_DEFAULT_PASSWORD", ""),
 		PgAdminPort:     getEnv("PGADMIN_PORT", "5050"),
+		RabbitMQUrl:     getEnv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/"),
 	}
 
 	cfg.DatabaseDSN = fmt.Sprintf(

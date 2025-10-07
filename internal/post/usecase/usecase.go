@@ -3,24 +3,26 @@ package usecase
 import (
 	"github.com/MingPV/PostService/internal/entities"
 	"github.com/MingPV/PostService/internal/post/repository"
+	"github.com/MingPV/PostService/pkg/mq"
 )
 
 type PostService struct {
 	repo repository.PostRepository
+	mq   mq.MQPublisher
 }
 
-func NewPostService(repo repository.PostRepository) PostUseCase {
-	return &PostService{repo:repo}
+func NewPostService(repo repository.PostRepository, mq mq.MQPublisher) PostUseCase {
+	return &PostService{repo: repo, mq: mq}
 }
 
 func (s *PostService) CreatePost(post *entities.Post) error {
-	if err := s.repo.Save(post); err !=nil {
+	if err := s.repo.Save(post); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *PostService) FindAllPosts() ([]*entities.Post, error){
+func (s *PostService) FindAllPosts() ([]*entities.Post, error) {
 	posts, err := s.repo.FindAll()
 	if err != nil {
 		return nil, err
@@ -50,7 +52,5 @@ func (s *PostService) PatchPost(id int, post *entities.Post) (*entities.Post, er
 	updatedPost, _ := s.repo.FindByID(id)
 
 	return updatedPost, nil
-	
+
 }
-
-

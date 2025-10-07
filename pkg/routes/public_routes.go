@@ -8,6 +8,7 @@ import (
 	orderHandler "github.com/MingPV/PostService/internal/order/handler/rest"
 	orderRepository "github.com/MingPV/PostService/internal/order/repository"
 	orderUseCase "github.com/MingPV/PostService/internal/order/usecase"
+	"github.com/MingPV/PostService/pkg/mq"
 
 	// Post
 	postHandler "github.com/MingPV/PostService/internal/post/handler/rest"
@@ -24,6 +25,9 @@ func RegisterPublicRoutes(app fiber.Router, db *gorm.DB) {
 
 	api := app.Group("/api/v1")
 
+	rabbitURL := "amqp://guest:guest@localhost:5672/"
+	mqPublisher := mq.NewRabbitMQPublisher(rabbitURL)
+
 	// === Dependency Wiring ===
 
 	// Order
@@ -33,7 +37,7 @@ func RegisterPublicRoutes(app fiber.Router, db *gorm.DB) {
 
 	// Post
 	postRepo := postRepository.NewGormPostRepository(db)
-	postService := postUseCase.NewPostService(postRepo)
+	postService := postUseCase.NewPostService(postRepo, mqPublisher)
 	postHandler := postHandler.NewHttpPostHandler(postService)
 
 	// PostReport
