@@ -10,7 +10,7 @@ type GormPostRepository struct {
 }
 
 func NewGormPostRepository(db *gorm.DB) PostRepository {
-	return &GormPostRepository{db:db}
+	return &GormPostRepository{db: db}
 }
 
 func (r *GormPostRepository) Save(post *entities.Post) error {
@@ -38,6 +38,19 @@ func (r *GormPostRepository) FindByID(id int) (*entities.Post, error) {
 	return &post, nil
 }
 
+func (r *GormPostRepository) FindByUserID(userID string) ([]*entities.Post, error) {
+	var postValues []entities.Post
+	if err := r.db.Where("post_by = ?", userID).Find(&postValues).Error; err != nil {
+		return nil, err
+	}
+
+	posts := make([]*entities.Post, len(postValues))
+	for i := range postValues {
+		posts[i] = &postValues[i]
+	}
+	return posts, nil
+}
+
 func (r *GormPostRepository) Delete(id int) error {
 	result := r.db.Delete(&entities.Post{}, id)
 	if result.Error != nil {
@@ -59,4 +72,3 @@ func (r *GormPostRepository) Patch(id int, post *entities.Post) error {
 	}
 	return nil
 }
-

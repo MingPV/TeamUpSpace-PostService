@@ -43,6 +43,14 @@ message FindPostByIDResponse {
 
 message FindAllPostsRequest {}
 
+message FindPostsByUserIDRequest {
+    string user_id = 1;
+}
+
+message FindPostsByUserIDResponse {
+    repeated Post posts = 1;
+}
+
 message FindAllPostsResponse {
     repeated Post posts = 1;
 }
@@ -75,6 +83,7 @@ service PostService {
   rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
   rpc FindPostByID(FindPostByIDRequest) returns (FindPostByIDResponse);
   rpc FindAllPosts(FindAllPostsRequest) returns (FindAllPostsResponse);
+  rpc FindPostsByUserID(FindPostsByUserIDRequest) returns (FindPostsByUserIDResponse);
   rpc PatchPost(PatchPostRequest) returns (PatchPostResponse);
   rpc DeletePost(DeletePostRequest) returns (DeletePostResponse);
 }

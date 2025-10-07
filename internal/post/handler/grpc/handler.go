@@ -50,6 +50,20 @@ func (h *GrpcPostHandler) FindPostByID(ctx context.Context, req *postpb.FindPost
 	return &postpb.FindPostByIDResponse{Post: toProtoPost(post)}, nil
 }
 
+func (h *GrpcPostHandler) FindPostsByUserID(ctx context.Context, req *postpb.FindPostsByUserIDRequest) (*postpb.FindPostsByUserIDResponse, error) {
+	posts, err := h.postUseCase.FindPostsByUserID(req.UserId)
+	if err != nil {
+		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
+	}
+
+	var protoPosts []*postpb.Post
+	for _, o := range posts {
+		protoPosts = append(protoPosts, toProtoPost(o))
+	}
+
+	return &postpb.FindPostsByUserIDResponse{Posts: protoPosts}, nil
+}
+
 func (h *GrpcPostHandler) FindAllPosts(ctx context.Context, req *postpb.FindAllPostsRequest) (*postpb.FindAllPostsResponse, error) {
 	posts, err := h.postUseCase.FindAllPosts()
 	if err != nil {

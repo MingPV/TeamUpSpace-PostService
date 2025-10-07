@@ -38,6 +38,14 @@ func (s *PostService) FindPostByID(id int) (*entities.Post, error) {
 	return post, nil
 }
 
+func (s *PostService) FindPostsByUserID(userID string) ([]*entities.Post, error) {
+	posts, err := s.repo.FindByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+	return posts, nil
+}
+
 func (s *PostService) DeletePost(id int) error {
 	if err := s.repo.Delete(id); err != nil {
 		return err

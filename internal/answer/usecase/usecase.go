@@ -62,6 +62,13 @@ func (s *AnswerService) FindAllAnswerByUserID(userId string) ([]*entities.Answer
 	return answers, nil
 }
 
+func (s *AnswerService) PatchAnswer(id int, answer *entities.Answer) error {
+	if err := s.repo.PatchAnswer(id, answer); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *AnswerService) DeleteAnswer(id int) error {
 	if err := s.repo.Delete(id); err != nil {
 		return err

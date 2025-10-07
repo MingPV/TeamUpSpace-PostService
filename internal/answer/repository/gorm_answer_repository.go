@@ -77,6 +77,17 @@ func (r *GormAnswerRepository) FindAllByUserID(userId string) ([]*entities.Answe
 	return answers, nil
 }
 
+func (r *GormAnswerRepository) PatchAnswer(id int, answer *entities.Answer) error {
+	result := r.db.Model(&entities.Answer{}).Where("id = ?", id).Updates(answer)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
+}
+
 func (r *GormAnswerRepository) Delete(id int) error {
 	result := r.db.Delete(&entities.Answer{}, id)
 	if result.Error != nil {

@@ -65,6 +65,18 @@ message FindAllAnswersByUserIDResponse {
     repeated Answer answers = 1;
 }
 
+message PatchAnswerRequest {
+    int32 id = 1;
+    int32 post_id = 2;
+    string user_id = 3;
+    string question = 4;
+    string answer = 5;
+}
+
+message PatchAnswerResponse {
+    Answer answer = 1;
+}
+
 message DeleteAnswerRequest {
     int32 id = 1;
 }
@@ -80,5 +92,6 @@ service AnswerService {
     rpc FindAnswerByPostIDAndUserID(FindAnswerByPostIDAndUserIDRequest) returns (FindAnswerByPostIDAndUserIDResponse);
     rpc FindAllAnswersByUserID(FindAllAnswersByUserIDRequest) returns (FindAllAnswersByUserIDResponse);
     rpc FindAllAnswers(FindAllAnswersRequest) returns (FindAllAnswersResponse);
+    rpc PatchAnswer(PatchAnswerRequest) returns (PatchAnswerResponse);
     rpc DeleteAnswer(DeleteAnswerRequest) returns (DeleteAnswerResponse);
 }

@@ -63,7 +63,7 @@ func (h *GrpcAnswerHandler) FindAllAnswersByPostID(ctx context.Context, req *ans
 }
 
 func (h *GrpcAnswerHandler) FindAnswerByPostIDAndUserID(ctx context.Context, req *answerpb.FindAnswerByPostIDAndUserIDRequest) (*answerpb.FindAnswerByPostIDAndUserIDResponse, error) {
-	answers, err := h.answerUseCase.FindAllAnswersByPostID(int(req.PostId))
+	answers, err := h.answerUseCase.FindAllAnswerByPostIDAndUserID(int(req.PostId), req.UserId)
 	if err != nil {
 		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
 	}
@@ -102,6 +102,26 @@ func (h *GrpcAnswerHandler) FindAllAnswers(ctx context.Context, req *answerpb.Fi
 	}
 
 	return &answerpb.FindAllAnswersResponse{Answers: protoAnswers}, nil
+}
+
+func (h *GrpcAnswerHandler) PatchAnswer(ctx context.Context, req *answerpb.PatchAnswerRequest) (*answerpb.PatchAnswerResponse, error) {
+	// answerByUUID, err := uuid.Parse(req.UserId)
+	// if err != nil {
+	// 	return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
+	// }
+	answer := &entities.Answer{
+		PostId:   int(req.PostId),
+		Question: req.Question,
+		Answer:   req.Answer,
+	}
+	if err := h.answerUseCase.PatchAnswer(int(req.Id), answer); err != nil {
+		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
+	}
+	updatedAnswer, err := h.answerUseCase.FindAnswerByID(int(req.Id))
+	if err != nil {
+		return nil, status.Errorf(apperror.GRPCCode(err), "%s", err.Error())
+	}
+	return &answerpb.PatchAnswerResponse{Answer: toProtoAnswer(updatedAnswer)}, nil
 }
 
 func (h *GrpcAnswerHandler) DeleteAnswer(ctx context.Context, req *answerpb.DeleteAnswerRequest) (*answerpb.DeleteAnswerResponse, error) {

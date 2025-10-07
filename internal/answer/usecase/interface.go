@@ -10,4 +10,5 @@ type AnswerUseCase interface {
 	FindAllAnswersByPostID(postId int) ([]*entities.Answer, error)
 	FindAllAnswerByPostIDAndUserID(postId int, userId string) ([]*entities.Answer, error)
 	FindAllAnswerByUserID(userId string) ([]*entities.Answer, error)
+	PatchAnswer(id int, answer *entities.Answer) error
 }

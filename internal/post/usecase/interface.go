@@ -8,4 +8,5 @@ type PostUseCase interface {
 	PatchPost(id int, post *entities.Post) (*entities.Post, error)
 	DeletePost(id int) error
 	FindPostByID(id int) (*entities.Post, error)
+	FindPostsByUserID(userID string) ([]*entities.Post, error)
 }

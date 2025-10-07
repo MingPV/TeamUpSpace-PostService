@@ -9,5 +9,6 @@ type AnswerRepository interface {
 	FindAllByPostID(postId int) ([]*entities.Answer, error)
 	FindAllByPostIDAndUserID(postId int, userId string) ([]*entities.Answer, error)
 	FindAllByUserID(userId string) ([]*entities.Answer, error)
+	PatchAnswer(id int, answer *entities.Answer) error
 	Delete(id int) error
 }
